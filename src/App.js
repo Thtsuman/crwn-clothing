@@ -1,7 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
-
 import './App.css';
+
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { setCurrentUser } from './redux/user/user.actions';
+
 
 import Homepage from './pages/homepage/homepage.components';
 import ShopPage from './pages/shop/shop.components';
@@ -10,31 +13,27 @@ import Header from './components/header/header.component';
 
 import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 
-class App extends React.Component {
 
-    state = {
-        currentUser: null
-    }
+class App extends React.Component {
 
     unsubscribeFromAuth = null;
 
     componentDidMount() {
+        const { setCurrentUser } = this.props;
+
         this.unsubscribeFromAuth = auth.onAuthStateChanged(async (authUser) => {
             if (authUser) {
                 const userRef = await createUserProfileDocument(authUser);
 
                 userRef.onSnapshot(snapShot => {
-                    this.setState({
-                        currentUser: {
-                            id: snapShot.id,
-                            ...snapShot.data()
-                        }
+                    setCurrentUser({
+                        id: snapShot.id,
+                        ...snapShot.data()
                     });
-                    console.log(this.state);
                 });
             }
             else {
-                this.setState({ currentUser: null })
+                setCurrentUser(authUser);
             }
         });
     }
@@ -47,7 +46,7 @@ class App extends React.Component {
         return (
             <div>
                 <Router>
-                    <Header currentUser={this.state.currentUser} />
+                    <Header />
                     <Route exact path='/' component={Homepage} />
                     <Route path='/shop' component={ShopPage} />
                     <Route path='/signin' component={SignInAndSignUp} />
@@ -57,4 +56,8 @@ class App extends React.Component {
     }
 }
 
-export default App;
+const mapDispatchToProps = dispatch => ({
+    setCurrentUser: user => dispatch(setCurrentUser(user))
+})
+
+export default connect(null, mapDispatchToProps)(App);
