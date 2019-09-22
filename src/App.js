@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import { Route, Redirect, HashRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { setCurrentUser } from './redux/user/user.actions';
 
@@ -45,7 +45,7 @@ class App extends React.Component {
     render() {
         return (
             <div>
-                <Router>
+                <HashRouter basename="/">
                     <Header />
                     <Route exact path='/' component={Homepage} />
                     <Route path='/shop' component={ShopPage} />
@@ -56,7 +56,7 @@ class App extends React.Component {
                             this.props.currentUser ?
                                 (<Redirect to='/' />) : (<SignInAndSignUp />)}
                     />
-                </Router>
+                </HashRouter>
             </div >
         )
     }
