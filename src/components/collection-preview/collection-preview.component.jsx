@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 
 import CollectionItem from '../collection-item/collection-item.component';
 
@@ -6,10 +7,17 @@ import Fade from 'react-reveal/Fade';
 
 import './collection-preview.style.scss';
 
-const CollectionPreview = ({ title, items }) => (
+const CollectionPreview = ({ title, items, history, match }) => (
     <div className='collection-preview'>
         <Fade bottom opposite>
-            <h1 className='title'>{title.toUpperCase()}</h1>
+            <div className='menu'>
+                <h1 className='title'>{title.toUpperCase()}</h1>
+                <p
+                    className='submenu'
+                    onClick={() => history.push(`${match.url}/${title.toLowerCase()}`)}
+                >see more</p>
+
+            </div>
             <div className='preview'>
                 {
                     items
@@ -23,4 +31,4 @@ const CollectionPreview = ({ title, items }) => (
     </div>
 )
 
-export default CollectionPreview;
+export default withRouter(CollectionPreview);
